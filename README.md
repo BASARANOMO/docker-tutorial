@@ -12,21 +12,21 @@
 
 ### Login to the Docker Hub
 
-´´´
+```bash
 docker login -u YOUR-USER-NAME
-´´´
+```
 
 ### Give the image a tag
 
-´´´
+```bash
 docker tag getting-started YOUR-USER-NAME/getting-started
-´´´
+```
 
 ### Docker push
 
-´´´
+```bash
 docker push YOUR-USER-NAME/getting-started
-´´´
+```
 
 ## Running image on a new instance
 
