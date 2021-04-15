@@ -1,5 +1,7 @@
 # Docker tutorial
 
+All infomation in this document comes from the [official Docker tutorial](https://github.com/docker/getting-started)
+
 ## Install
 
 ## Getting started - to do list app
