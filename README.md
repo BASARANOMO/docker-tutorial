@@ -31,3 +31,6 @@ docker push YOUR-USER-NAME/getting-started
 ## Running image on a new instance
 
 [Play with Docker](https://labs.play-with-docker.com/)
+
+Do `docker run -dp 3000:3000 YOUR-USER-NAME/getting-started` in the sand box.
+
