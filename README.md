@@ -129,12 +129,24 @@ When working on an application, we can use a bind mount to mount our source code
 
 1. Shutdown all previous `getting-started` containers.
 
-2. Run:
+2. Run the command below in `/app` folder:
 
     ```bash
     docker run -dp 3000:3000 \
         -w /app -v "$(pwd):/app" \
         node:12-alpine \
-        sh -c "yarn install && yarn run dev"
+        sh -c "apk add python && apk add g++ && apk add make && yarn install && yarn run dev"
     ```
-    
+
+3. Make a change to the app:
+
+    ```git
+    -                         {submitting ? 'Adding...' : 'Add Item'}
+    +                         {submitting ? 'Adding...' : 'Add'}
+    ```
+
+4. Build:
+
+   ```bash
+   docker build -t getting-started .
+   ```
