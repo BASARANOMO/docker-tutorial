@@ -162,7 +162,9 @@ A few reasons to use multi-containers:
 
 ### Container networking
 
-Rule: >__If two containers are on the same network, they can talk to each other. If they aren't, they can't.__
+Rule:
+
+> __If two containers are on the same network, they can talk to each other. If they aren't, they can't.__
 
 ### Starting MySQL
 
