@@ -150,3 +150,19 @@ When working on an application, we can use a bind mount to mount our source code
    ```bash
    docker build -t getting-started .
    ```
+
+## Multi-container apps
+
+A few reasons to use multi-containers:
+
+- There's a good chance you'd have to scale APIs and front-ends differently than databases
+- Separate containers let you version and update versions in isolation
+- While you may use a container for the database locally, you may want to use a managed service for the database in production. You don't want to ship your database engine with your app then.
+- Running multiple processes will require a process manager (the container only starts one process), which adds complexity to container startup/shutdown.
+
+### Container networking
+
+Rule: >__If two containers are on the same network, they can talk to each other. If they aren't, they can't.__
+
+### Starting MySQL
+
