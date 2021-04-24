@@ -194,8 +194,9 @@ Create the network first and attach the ~~MySQL~~MariaDB container at startup:
 
 3. To confirm we have the database up and running, connect to the database and verify it connects.
 
-    ```bash
-    docker exec -it <mysql-container-id> ~~mysql~~mariadb -p
+    ```diff
+    -docker exec -it <mysql-container-id> mysql -p
+    +docker exec -it <mysql-container-id> mariadb -p
     ```
 
     Password: `secret`
