@@ -258,3 +258,48 @@ The todo app supports the setting of a few environment variables to specify ~~My
 - `MYSQL_PASSWORD` the password to use for the connection
 - `MYSQL_DB` the database to use once connected
 
+1. We'll specify each of the environment variables above, as well as connect the container to our app network.
+
+    ```bash
+    docker run -dp 3000:3000 \
+        -w /app -v "$(pwd):/app" \
+        --network todo-app \
+        -e MYSQL_HOST=mysql \
+        -e MYSQL_USER=root \
+        -e MYSQL_PASSWORD=secret \
+        -e MYSQL_DB=todos \
+        node:12-alpine \
+        sh -c "yarn install && yarn run dev"
+    ```
+
+2. If we look at the logs for the container (`docker logs <container-id>`), we should see a message indicating it's using the mysql database.
+
+3. Open the app in your browser and add a few items to your todo list.
+
+4. Connect to the ~~mysql~~MariaDB database and prove that the items are being written to the database. Remember, the password is `secret`.
+
+    ```diff
+    - docker exec -it <mysql-container-id> mysql -p
+    + docker exec -it <mysql-container-id> mariadb -p
+    ```
+
+    And in the mysql shell, run the following:
+
+    ```sql
+    MariaDB [todos]> select * from todo_items;
+    ```
+
+    We'll see:
+
+    ```
+    +--------------------------------------+--------+-----------+
+    | id                                   | name   | completed |
+    +--------------------------------------+--------+-----------+
+    | e69348d3-636f-4e26-bd33-fb7f5bc34167 | test   |         0 |
+    | 7c341428-d6a2-4902-a8a5-7bf08668f77d | hi     |         0 |
+    | 020cc3d5-4e5b-41fa-83f7-97ea659a324a | strike |         0 |
+    +--------------------------------------+--------+-----------+
+    3 rows in set (0.000 sec)
+    ```
+
+    Obviously, your table will look different because it has your items. But, you should see them stored there!
