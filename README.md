@@ -166,5 +166,92 @@ Rule:
 
 > __If two containers are on the same network, they can talk to each other. If they aren't, they can't.__
 
-### Starting MySQL
+### Starting ~~MySQL~~MariaDB
+
+No available Docker image of `MySQL` under the Apple M1 ARM-64 environment. We use `MariaDB` instead.
+
+Two ways to put a container on a network: (1) Assign it at start or (2) connect an existing container.
+
+Create the network first and attach the ~~MySQL~~MariaDB container at startup:
+
+1. Create the network:
+
+    ```bash
+    docker network create todo-app
+    ```
+
+2. Start a ~~MySQL~~MariaDB container and attach it to the network.
+
+    ```bash
+    docker run -d \
+        --network todo-app --network-alias mysql \
+        -v todo-mysql-data:/var/lib/mysql \
+        -e MYSQL_ROOT_PASSWORD=secret \
+        -e MYSQL_DATABASE=todos \
+        ~~mysql:5.7~~mariadb
+    ```
+
+3. To confirm we have the database up and running, connect to the database and verify it connects.
+
+    ```bash
+    docker exec -it <mysql-container-id> ~~mysql~~mariadb -p
+    ```
+
+    Password: `secret`
+
+    Then in the ~~MySQL~~MariaDB shell, listh the databases and verify:
+
+    ```sql
+    ~~mysql~~MariaDB [(none)]> SHOW DATABASES;
+    ```
+
+### Connecting to ~~MySQL~~MariaDB
+
+Make use of the [nicolaka/netshoot](https://github.com/nicolaka/netshoot) container, which ships with a lot of tools that are useful for troubleshooting or debugging networking issues.
+
+1. Start a new container using the `nicolaka/netshoot` image.
+
+    ```bash
+    docker run -it --network todo-app nicolaka/netshoot
+    ```
+
+2. Inside the container, we're going to use the `dig` command, which is a useful DNS tool. We're going to look up the IP address for the hostname `mysql`
+
+    ```bash
+    dig mysql
+    ```
+
+    Output:
+
+    ```bash
+    ; <<>> DiG 9.16.11 <<>> mysql
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 2315
+    ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+    ;; QUESTION SECTION:
+    ;mysql.				IN	A
+
+    ;; ANSWER SECTION:
+    mysql.			600	IN	A	172.18.0.2
+
+    ;; Query time: 1 msec
+    ;; SERVER: 127.0.0.11#53(127.0.0.11)
+    ;; WHEN: Sat Apr 24 03:10:14 UTC 2021
+    ;; MSG SIZE  rcvd: 44
+    ```
+
+    In the `ANSWER SECTION`, you will see an `A` record for `mysql` that resolves to `172.18.0.2`. While `mysql` isn't normally a valid hostname, Docker was able to resolve it to the IP address of the container that had that network alias (remember the `--network-alias` flag we used earlier?).
+
+    What this means is... our app only simply needs to connect to a host named `mysql` and it'll talk to the database! It doesn't get much simpler than that!
+
+### Running our App with ~~MySQL~~MariaDB
+
+The todo app supports the setting of a few environment variables to specify ~~MySQL~~MariaDB connection settings. They are:
+
+- `MYSQL_HOST` the hostname for the running ~~MySQL~~MariaDB server
+- `MYSQL_USER` the username to use for the connection
+- `MYSQL_PASSWORD` the password to use for the connection
+- `MYSQL_DB` the database to use once connected
 
