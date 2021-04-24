@@ -203,8 +203,9 @@ Create the network first and attach the ~~MySQL~~MariaDB container at startup:
 
     Then in the ~~MySQL~~MariaDB shell, listh the databases and verify:
 
-    ```sql
-    ~~mysql~~MariaDB [(none)]> SHOW DATABASES;
+    ```diff sql
+    -mysql> SHOW DATABASES;
+    +MariaDB [(none)]> SHOW DATABASES;
     ```
 
 ### Connecting to ~~MySQL~~MariaDB
