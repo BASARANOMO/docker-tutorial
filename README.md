@@ -140,7 +140,7 @@ When working on an application, we can use a bind mount to mount our source code
 
 3. Make a change to the app:
 
-    ```git
+    ```diff
     -                         {submitting ? 'Adding...' : 'Add Item'}
     +                         {submitting ? 'Adding...' : 'Add'}
     ```
@@ -182,13 +182,14 @@ Create the network first and attach the ~~MySQL~~MariaDB container at startup:
 
 2. Start a ~~MySQL~~MariaDB container and attach it to the network.
 
-    ```bash
+    ```diff
     docker run -d \
         --network todo-app --network-alias mysql \
         -v todo-mysql-data:/var/lib/mysql \
         -e MYSQL_ROOT_PASSWORD=secret \
         -e MYSQL_DATABASE=todos \
-        ~~mysql:5.7~~mariadb
+    -   mysql:5.7
+    +   mariadb
     ```
 
 3. To confirm we have the database up and running, connect to the database and verify it connects.
