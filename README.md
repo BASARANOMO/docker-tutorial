@@ -670,3 +670,47 @@ Now that we have our `docker-compose.yml` file, we can start it up!
 ### Tearing it All Down
 
 When you're ready to tear it all down, simply run `docker-compose down` or hit the trash can on the Docker Dashboard for the entire app. The containers will stop and the network will be removed.
+
+
+## Image building best practice
+
+### Security scanning
+
+When you have built an image, it is good practice to scan it for security vulnerabilities using the `docker scan` command. Docker has partnered with [Snyk](http://snyk.io/) to provide the vulnerability scanning service.
+
+For example, to scan the `getting-started` image you created earlier in the tutorial, you can just type:
+
+```bash
+docker scan getting-started
+```
+
+The scan uses a constantly updated database of vulnerabilities, so the output you see will vary as new vulnerabilities are discovered, but it might look something like this:
+
+```
+Testing getting-started...
+
+✗ Medium severity vulnerability found in binutils/binutils
+  Description: Improper Input Validation
+  Info: https://snyk.io/vuln/SNYK-ALPINE311-BINUTILS-1255521
+  Introduced through: binutils/binutils@2.33.1-r0, gcc/g++@9.3.0-r0, gcc/libgcc@9.3.0-r0, gcc/libgomp@9.3.0-r0
+  From: binutils/binutils@2.33.1-r0
+  From: gcc/g++@9.3.0-r0 > binutils/binutils@2.33.1-r0
+  From: gcc/libgcc@9.3.0-r0 > binutils/binutils@2.33.1-r0
+  and 2 more...
+  Fixed in: 2.33.1-r1
+
+
+
+Organization:      undefined
+Package manager:   apk
+Project name:      docker-image|getting-started
+Docker image:      getting-started
+Platform:          linux/arm64
+
+Tested 38 dependencies for known vulnerabilities, found 1 vulnerability.
+
+For more free scans that keep your images secure, sign up to Snyk at https://dockr.ly/3ePqVcp
+```
+
+### Image layering
+
