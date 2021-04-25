@@ -714,3 +714,86 @@ For more free scans that keep your images secure, sign up to Snyk at https://doc
 
 ### Image layering
 
+Did you know that you can look at what makes up an image? Using the `docker image history` command, you can see the command that was used to create each layer within an image.
+
+1. Use the `docker image history` command to see the layers in the getting-started image you created earlier in the tutorial.
+
+    ```bash
+    docker image history getting-started
+    ```
+
+2. You'll notice that several of the lines are truncated. If you add the `--no-trunc` flag, you'll get the full output (yes... funny how you use a truncated flag to get untruncated output, huh?)
+
+    ```bash
+    docker image history --no-trunc getting-started
+    ```
+
+### Layer caching
+
+Now that you've seen the layering in action, there's an important lesson to learn to help decrease build times for your container images.
+
+> Once a layer changes, all downstream layers have to be recreated as well
+
+Let's look at the Dockerfile we were using one more time...
+
+```bash
+FROM node:12-alpine
+WORKDIR /app
+COPY . .
+RUN yarn install --production
+CMD ["node", "src/index.js"]
+```
+
+Going back to the image history output, we see that each command in the Dockerfile becomes a new layer in the image. You might remember that when we made a change to the image, the yarn dependencies had to be reinstalled. Is there a way to fix this? It doesn't make much sense to ship around the same dependencies every time we build, right?
+
+To fix this, we need to restructure our Dockerfile to help support the caching of the dependencies. For Node-based applications, those dependencies are defined in the `package.json` file. So, what if we copied only that file in first, install the dependencies, and then copy in everything else? Then, we only recreate the yarn dependencies if there was a change to the `package.json`. Make sense?
+
+1. Update the Dockerfile to copy in the `package.json` first, install dependencies, and then copy everything else in.
+   
+  ```
+  FROM node:12-alpine
+  WORKDIR /app
+  COPY package.json yarn.lock ./
+  RUN yarn install --production
+  COPY . .
+  CMD ["node", "src/index.js"]
+  ```
+
+2. Create a file named `.dockerignore` in the same folder as the `Dockerfile` with the following contents.
+
+  ```
+  node_modules
+  ```
+
+  `.dockerignore` files are an easy way to selectively copy only image relevant files. You can read more about this [here](https://docs.docker.com/engine/reference/builder/#dockerignore-file). In this case, the `node_modules` folder should be omitted in the second `COPY` step because otherwise, it would possibly overwrite files which were created by the command in the `RUN` step. For further details on why this is recommended for Node.js applications and other best practices, have a look at their guide on [Dockerizing a Node.js web app](https://nodejs.org/en/docs/guides/nodejs-docker-webapp/).
+
+3. Build a new image using `docker build`.
+
+  ```bash
+  docker build -t getting-started .
+  ```
+
+4. Now, make a change to the `src/static/index.html` file (like change the `<title>` to say "The Awesome Todo App").
+
+5. Build the Docker image now using `docker build -t getting-started .` again. This time, your output should look a little different.
+
+### Multi-stage builds
+
+While we're not going to dive into it too much in this tutorial, multi-stage builds are an incredibly powerful tool to help use multiple stages to create an image. There are several advantages for them:
+
+- Separate build-time dependencies from runtime dependencies
+- Reduce overall image size by shipping only what your app needs to run
+
+#### Maven/Tomcat example
+
+When building Java-based applications, a JDK is needed to compile the source code to Java bytecode. However, that JDK isn't needed in production. Also, you might be using tools like Maven or Gradle to help build the app. Those also aren't needed in our final image. Multi-stage builds help.
+
+```
+FROM maven AS build
+WORKDIR /app
+COPY . .
+RUN mvn package
+
+FROM tomcat
+COPY --from=build /app/target/file.war /usr/local/tomcat/webapps 
+```
