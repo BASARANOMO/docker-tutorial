@@ -1,6 +1,6 @@
 # Docker tutorial
 
-All infomation in this document comes from the [official Docker tutorial](https://github.com/docker/getting-started).
+All infomation in this document comes from the [official Docker tutorial](https://github.com/docker/getting-started) and __adapted to MacOS 11 and ARM-64 architecture__.
 
 ## Install
 
