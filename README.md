@@ -788,7 +788,7 @@ While we're not going to dive into it too much in this tutorial, multi-stage bui
 
 When building Java-based applications, a JDK is needed to compile the source code to Java bytecode. However, that JDK isn't needed in production. Also, you might be using tools like Maven or Gradle to help build the app. Those also aren't needed in our final image. Multi-stage builds help.
 
-```
+```docker
 FROM maven AS build
 WORKDIR /app
 COPY . .
@@ -797,3 +797,25 @@ RUN mvn package
 FROM tomcat
 COPY --from=build /app/target/file.war /usr/local/tomcat/webapps 
 ```
+
+In this example, we use one stage (called `build`) to perform the actual Java build using Maven. In the second stage (starting at `FROM tomcat`), we copy in files from the `build` stage. The final image is only the last stage being created (which can be overridden using the `--target` flag).
+
+#### React example
+
+When building React applications, we need a Node environment to compile the JS code (typically JSX), SASS stylesheets, and more into static HTML, JS, and CSS. If we aren't doing server-side rendering, we don't even need a Node environment for our production build. Why not ship the static resources in a static nginx container?
+
+```docker
+FROM node:12 AS build
+WORKDIR /app
+COPY package* yarn.lock ./
+RUN yarn install
+COPY public ./public
+COPY src ./src
+RUN yarn run build
+
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+```
+
+Here, we are using a `node:12` image to perform the build (maximizing layer caching) and then copying the output into an nginx container. Cool, huh?
+
