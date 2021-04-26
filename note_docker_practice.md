@@ -6,5 +6,5 @@
 
 ## Image
 
-### Image <none>
+### Image `<none>`
 
