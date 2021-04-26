@@ -14,19 +14,19 @@ All infomation in this document comes from the [official Docker tutorial](https:
 
 ### Login to the Docker Hub
 
-```bash
+```zsh
 docker login -u YOUR-USER-NAME
 ```
 
 ### Give the image a tag
 
-```bash
+```zsh
 docker tag getting-started YOUR-USER-NAME/getting-started
 ```
 
 ### Docker push
 
-```bash
+```zsh
 docker push YOUR-USER-NAME/getting-started
 ```
 
@@ -42,7 +42,7 @@ Do `docker run -dp 3000:3000 YOUR-USER-NAME/getting-started` in the sand box.
 
 1. Start a `Ubuntu` container that will create a file named /data.txt with a random number between 1 and 10000.
 
-    ```bash
+    ```zsh
     docker run -d ubuntu bash -c "shuf -i 1-10000 -n 1 -o /data.txt && tail -f /dev/null"
     ```
 
@@ -54,7 +54,7 @@ Do `docker run -dp 3000:3000 YOUR-USER-NAME/getting-started` in the sand box.
 
 3. Now start another `Ubuntu` container:
 
-    ```bash
+    ```zsh
     docker run -it ubuntu ls /
     ```
 
@@ -74,19 +74,19 @@ Named volume: a bucket of data stored on the host
 
 1. Create a volume using the `docker volume create` command:
 
-   ```bash
+   ```zsh
    docker volume create todo-db
    ```
 
 2. Restart the todo app container:
 
-    ```bash
+    ```zsh
     docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started
     ```
 
 3. Add some new items then remove the container
 
-    ```bash
+    ```zsh
     docker rm -f <id>
     ```
 
@@ -98,7 +98,7 @@ Question: where is Docker actually storing the data when using a named volume?
 
 Use:
 
-```bash
+```zsh
 docker volume inspect todo-db
 ```
 
@@ -131,7 +131,7 @@ When working on an application, we can use a bind mount to mount our source code
 
 2. Run the command below in `/app` folder:
 
-    ```bash
+    ```zsh
     docker run -dp 3000:3000 \
         -w /app -v "$(pwd):/app" \
         node:12-alpine \
@@ -147,7 +147,7 @@ When working on an application, we can use a bind mount to mount our source code
 
 4. Build:
 
-   ```bash
+   ```zsh
    docker build -t getting-started .
    ```
 
@@ -176,7 +176,7 @@ Create the network first and attach the ~~MySQL~~MariaDB container at startup:
 
 1. Create the network:
 
-    ```bash
+    ```zsh
     docker network create todo-app
     ```
 
@@ -214,13 +214,13 @@ Make use of the [nicolaka/netshoot](https://github.com/nicolaka/netshoot) contai
 
 1. Start a new container using the `nicolaka/netshoot` image.
 
-    ```bash
+    ```zsh
     docker run -it --network todo-app nicolaka/netshoot
     ```
 
 2. Inside the container, we're going to use the `dig` command, which is a useful DNS tool. We're going to look up the IP address for the hostname `mysql`
 
-    ```bash
+    ```zsh
     dig mysql
     ```
 
@@ -260,7 +260,7 @@ The todo app supports the setting of a few environment variables to specify ~~My
 
 1. We'll specify each of the environment variables above, as well as connect the container to our app network.
 
-    ```bash
+    ```zsh
     docker run -dp 3000:3000 \
         -w /app -v "$(pwd):/app" \
         --network todo-app \
@@ -314,7 +314,7 @@ Advantage of using Compose: you can define your application stack in a file, kee
 
 Use the command to check Docker Compose's version:
 
-```bash
+```zsh
 docker-compose version
 ```
 
@@ -332,7 +332,7 @@ And now, we'll start migrating a service at a time into the compose file.
 
 To remember, this was the command we were using to define our app container.
 
-```bash
+```zsh
 docker run -dp 3000:3000 \
   -w /app -v "$(pwd):/app" \
   --network todo-app \
@@ -421,7 +421,7 @@ docker run -dp 3000:3000 \
 
 Now, it's time to define the ~~MySQL~~MariaDB service. The command that we used for that container was the following:
 
-```bash
+```zsh
 docker run -d \
   --network todo-app --network-alias mysql \
   -v todo-mysql-data:/var/lib/mysql \
@@ -520,7 +520,7 @@ Now that we have our `docker-compose.yml` file, we can start it up!
 
 2. Start up the application stack using the `docker-compose` up command. We'll add the `-d` flag to run everything in the background.
 
-    ```bash
+    ```zsh
     docker-compose up -d
     ```
 
@@ -680,7 +680,7 @@ When you have built an image, it is good practice to scan it for security vulner
 
 For example, to scan the `getting-started` image you created earlier in the tutorial, you can just type:
 
-```bash
+```zsh
 docker scan getting-started
 ```
 
@@ -718,13 +718,13 @@ Did you know that you can look at what makes up an image? Using the `docker imag
 
 1. Use the `docker image history` command to see the layers in the getting-started image you created earlier in the tutorial.
 
-    ```bash
+    ```zsh
     docker image history getting-started
     ```
 
 2. You'll notice that several of the lines are truncated. If you add the `--no-trunc` flag, you'll get the full output (yes... funny how you use a truncated flag to get untruncated output, huh?)
 
-    ```bash
+    ```zsh
     docker image history --no-trunc getting-started
     ```
 
@@ -736,7 +736,7 @@ Now that you've seen the layering in action, there's an important lesson to lear
 
 Let's look at the Dockerfile we were using one more time...
 
-```bash
+```zsh
 FROM node:12-alpine
 WORKDIR /app
 COPY . .
@@ -769,7 +769,7 @@ To fix this, we need to restructure our Dockerfile to help support the caching o
 
 3. Build a new image using `docker build`.
 
-  ```bash
+  ```zsh
   docker build -t getting-started .
   ```
 
