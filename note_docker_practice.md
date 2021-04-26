@@ -6,5 +6,14 @@
 
 ## Image
 
-### Image `<none>`
+### Dangling image `<none>`
 
+```bash
+docker image ls -f dangling=true
+```
+
+These images are generally no more useful and can be removed:
+
+```bash
+docker image prune
+```
