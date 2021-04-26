@@ -6,5 +6,5 @@
 
 ## Image
 
-### Image & lt;none& gt;
+### Image <none>
 
