@@ -177,7 +177,7 @@ Notes: You cannot specify the build-context directory (`arm64v8/hello-world` in 
 docker build http://server/context.tar.gz
 ```
 
-#### use standard IO
+#### Use standard input stream
 
 ```zsh
 docker build - < Dockerfile
@@ -190,4 +190,8 @@ cat Dockerfile | docker build -
 ```zsh
 docker build - < context.tar.gz
 ```
+
+### Other ways to create image
+
+#### Import from rootfs
 
