@@ -195,3 +195,13 @@ docker build - < context.tar.gz
 
 #### Import from rootfs
 
+```zsh
+docker import \
+    http://download.openvz.org/template/precreated/ubuntu-16.04-x86_64.tar.gz \
+    openvz/ubuntu:16.04
+```
+
+#### Export and import images using `docker save` and `docker load`
+
+Not recommanded. It's better to use Docker Registry.
+
